@@ -15,9 +15,9 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 py-4 z-50 border-b border-emerald-100/80 bg-white/80 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 py-4 z-50  border-emerald-100/80backdrop-blur-xl">
       <nav
-        className="mx-auto flex border-1 max-w-7xl items-center justify-between px-6 py-4 lg:px-10 bg-emerald-700 rounded-full"
+        className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10 bg-emerald-700 rounded-full"
         aria-label="Main navigation"
         data-testid="main-navbar"
       >
