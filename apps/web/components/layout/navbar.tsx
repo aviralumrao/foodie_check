@@ -1,18 +1,15 @@
 import { useState } from "react";
-import { ArrowUpRight, Menu, ScanLine, X } from "lucide-react";
+import { ArrowUpRight, Menu, ScanLine, X, User } from "lucide-react";
 
 const navItems = [
-  { label: "Home", href: "#home", id: "navbar-home-link" },
-  {
-    label: "How it works",
-    href: "#how-it-works",
-    id: "navbar-how-it-works-link",
-  },
-  { label: "Security", href: "#security", id: "navbar-security-link" },
+  { label: "Home", href: "/", id: "navbar-home-link" },
+  { label: "History", href: "/history", id: "navbar-history-link" },
+  { label: "About", href: "/about", id: "navbar-about-link" },
 ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <header className="fixed inset-x-0 top-0 py-4 z-50  border-emerald-100/80backdrop-blur-xl">
@@ -57,16 +54,27 @@ export default function Navbar() {
           ))}
 
           <a
-            href="#scan"
+            href={isLoggedIn ? "#profile" : "#login"}
             className="group inline-flex items-center gap-2 rounded-full bg-fuchsia-50 px-5 py-2.5 text-sm font-bold text-emerald-700 shadow-lg shadow-emerald-900/15 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-xl"
-            data-testid="navbar-check-product-button"
+            data-testid="navbar-login-button"
+            onClick={() => {
+              if (!isLoggedIn) {
+                // Handle login navigation
+              }
+            }}
           >
-            Check product
-            <ArrowUpRight
-              size={16}
-              className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              aria-hidden="true"
-            />
+            {isLoggedIn ? (
+              <User size={20} aria-hidden="true" />
+            ) : (
+              <>
+                Login
+                <ArrowUpRight
+                  size={16}
+                  className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  aria-hidden="true"
+                />
+              </>
+            )}
           </a>
         </div>
 
@@ -107,13 +115,19 @@ export default function Navbar() {
             ))}
 
             <a
-              href="#scan"
+              href={isLoggedIn ? "#profile" : "#login"}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white transition-transform duration-200 hover:-translate-y-0.5"
               onClick={() => setMenuOpen(false)}
-              data-testid="navbar-mobile-check-product-button"
+              data-testid="navbar-mobile-login-button"
             >
-              Check product
-              <ArrowUpRight size={16} aria-hidden="true" />
+              {isLoggedIn ? (
+                <User size={20} aria-hidden="true" />
+              ) : (
+                <>
+                  Login
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </>
+              )}
             </a>
           </div>
         </div>
