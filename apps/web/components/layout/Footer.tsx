@@ -1,13 +1,9 @@
 import { ArrowUpRight, ScanLine } from "lucide-react";
 
 const footerLinks = [
-{ label: "Home", href: "#home", id: "footer-home-link" },
-{
-label: "How it works",
-href: "#how-it-works",
-id: "footer-how-it-works-link",
-},
-{ label: "Security", href: "#security", id: "footer-security-link" },
+  { label: "Home", href: "/", id: "footer-home-link" },
+  { label: "History", href: "/history", id: "footer-history-link" },
+  { label: "About", href: "/about", id: "footer-about-link" },
 ];
 
 export default function Footer() {
