@@ -1,13 +1,21 @@
 import { useRef, useState } from "react";
 import { Upload } from "lucide-react";
 
-export default function UploadCard({ label = "Back Packaging Image" }) {
+interface UploadCardProps {
+  label?: string;
+  onFileSelect?: (file: File) => void;
+}
+
+export default function UploadCard({ label = "Back Packaging Image", onFileSelect }: UploadCardProps) {
   const [img, setImg] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setImg(URL.createObjectURL(file));
+    if (file) {
+      setImg(URL.createObjectURL(file));
+      onFileSelect?.(file);
+    }
   };
 
   return (
