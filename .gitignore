@@ -1,0 +1,9 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+services/ocr-engine/results/*.json
+
+node_modules/
+.next/
