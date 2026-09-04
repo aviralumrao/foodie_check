@@ -1,0 +1,7 @@
+[
+  { "id": "LM6_1_b", "field": "common_name", "clause": "Rule 6(1)(b)", "check": "presence", "description": "Common or generic name must be declared" },
+  { "id": "LM6_1_c", "field": "net_quantity", "clause": "Rule 6(1)(c)", "check": "presence", "description": "Net quantity must be declared" },
+  { "id": "LM6_1_d", "field": "mrp", "clause": "Rule 6(1)(d)", "check": "presence_with_hedge", "description": "MRP inclusive of taxes must be declared" },
+  { "id": "LM6_1_e", "field": "mfg_date", "clause": "Rule 6(1)(e)", "check": "presence_with_hedge", "description": "Month and year of manufacture/packing must be declared" },
+  { "id": "LM6_1_a", "field": "manufacturer_address", "clause": "Rule 6(1)(a)", "check": "presence_multi", "description": "Name and address of manufacturer/packer must be declared" }
+]

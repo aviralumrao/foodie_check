@@ -3,52 +3,99 @@
 import { useState } from "react";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/navbar";
-import UploadCard from "@/components/scan/UploadCard";
+import UploadSection from "@/components/scan/UploadSection";
+import ReportSection from "@/components/scan/ReportSection";
 import PillButton from "@/components/ui/Button";
-import { runOcrScan } from "@/lib/api";
+import { runOcrScan, EvaluateResponse } from "@/lib/api";
 
 export default function Home() {
   const [frontFile, setFrontFile] = useState<File | null>(null);
   const [backFile, setBackFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [reportData, setReportData] = useState<EvaluateResponse | null>(null);
+  const [scanTimestamp, setScanTimestamp] = useState<string>("");
 
   const handleGenerateReport = async () => {
     if (!frontFile || !backFile) {
-      alert("Upload both images first");
+      alert("Please upload both front and back packaging images");
       return;
     }
     setLoading(true);
     try {
       const result = await runOcrScan(frontFile, backFile);
-      console.log(result);
+      setReportData(result);
+      setScanTimestamp(new Date().toLocaleString());
+
+      // Extract product name from common_name field
+      const commonNameField = result.fields.common_name;
+      const productName =
+        commonNameField && !Array.isArray(commonNameField) && "value" in commonNameField
+          ? commonNameField.value || "Unknown Product"
+          : "Unknown Product";
+
+      const scanRecord = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        productName,
+        summary: result.summary,
+        rules: result.rules,
+      };
+
+      // Save to localStorage for history
+      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
+      history.unshift(scanRecord);
+      localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 50))); // keep last 50
     } catch (err) {
       console.error(err);
+      alert("Failed to generate report. Please ensure the OCR service is running on http://localhost:8000");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCheckAnother = () => {
+    setReportData(null);
+    setFrontFile(null);
+    setBackFile(null);
+    setScanTimestamp("");
+  };
+
+  const handleDownloadPDF = () => {
+    alert("PDF download feature coming soon!");
+  };
+
   return (
     <>
       <Navbar />
-      <main className="min-h-screen flex flex-col items-center justify-center px-4 py-12 pt-32 scroll-pt-32">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4">Initiate New Scan</h1>
-          <p className="text-lg text-gray-600 max-w-2xl">
-            Upload high-resolution images of the product packaging to begin
-            automated compliance verification.
-          </p>
-        </div>
+      <main className="min-h-screen flex flex-col items-center px-4 py-12 pt-32">
+        {!reportData ? (
+          <UploadSection
+            frontFile={frontFile}
+            backFile={backFile}
+            onFrontSelect={setFrontFile}
+            onBackSelect={setBackFile}
+            onGenerate={handleGenerateReport}
+            loading={loading}
+          />
+        ) : (
+          <>
+            <UploadSection
+              frontFile={frontFile}
+              backFile={backFile}
+              onFrontSelect={() => {}}
+              onBackSelect={() => {}}
+              onGenerate={handleCheckAnother}
+              loading={false}
+            />
+            <PillButton text="Check Another" onClick={handleCheckAnother} />
 
-        <div className="flex flex-col lg:flex-row gap-8 mb-12 w-full max-w-4xl justify-center items-center">
-          <UploadCard label="Front Packaging Image" onFileSelect={setFrontFile} />
-          <UploadCard label="Back Packaging Image" onFileSelect={setBackFile} />
-        </div>
-
-        <PillButton
-          text={loading ? "Scanning..." : "Generate Report"}
-          onClick={handleGenerateReport}
-        />
+            <ReportSection
+              reportData={reportData}
+              scanTimestamp={scanTimestamp}
+              onDownloadPDF={handleDownloadPDF}
+            />
+          </>
+        )}
       </main>
       <Footer />
     </>

@@ -4,6 +4,8 @@ from paddleocr import PaddleOCR
 import numpy as np
 import cv2
 import json
+from mapping.field_mapper import map_fields
+from rules.engine import run_rule_engine
 
 app = FastAPI()
 
@@ -54,3 +56,31 @@ async def extract_text(front: UploadFile = File(...), back: UploadFile = File(..
         json.dump(result, f, indent=2)
 
     return result
+
+
+@app.post("/evaluate")
+async def evaluate_compliance(front: UploadFile = File(...), back: UploadFile = File(...)):
+    front_bytes = await front.read()
+    back_bytes = await back.read()
+
+    front_blocks = run_ocr(front_bytes)
+    back_blocks = run_ocr(back_bytes)
+
+    fields = map_fields(front_blocks, back_blocks)
+    all_blocks = front_blocks + back_blocks
+    rule_results = run_rule_engine(fields, all_blocks)
+
+    passed = sum(1 for r in rule_results if r["status"] == "passed")
+    review = sum(1 for r in rule_results if r["status"] == "needs_review")
+    failed = sum(1 for r in rule_results if r["status"] == "failed")
+
+    report = {
+        "fields": fields,
+        "rules": rule_results,
+        "summary": {"passed": passed, "needs_review": review, "failed": failed},
+    }
+
+    with open("results/latest_report.json", "w") as f:
+        json.dump(report, f, indent=2, default=str)
+
+    return report
