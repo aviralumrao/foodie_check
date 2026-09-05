@@ -80,7 +80,9 @@ const FIELD_LABELS: Record<string, string> = {
   net_quantity: "Net quantity",
   mfg_date: "Month/year of manufacture or packing",
   mrp: "MRP (incl. of all taxes)",
+  best_before: "Best before / Expiry date",
   consumer_care: "Consumer care details",
+  fssai_license: "FSSAI license number",
   lm_registration: "Legal Metrology registration number",
 };
 

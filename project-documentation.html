@@ -1,0 +1,1307 @@
+<title>Foodie Check: Technical Architecture</title>
+
+<style>
+:root {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-secondary: #525252;
+  --border: #e5e5e5;
+  --accent: #dc2626;
+  --accent-light: #fef2f2;
+  --success: #16a34a;
+  --warning: #eab308;
+  --info: #3b82f6;
+  --code-bg: #f5f5f5;
+  --rule-passed: #dcfce7;
+  --rule-review: #fef3c7;
+  --rule-failed: #fee2e2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0a;
+    --surface: #171717;
+    --text: #fafafa;
+    --text-secondary: #a3a3a3;
+    --border: #262626;
+    --accent: #ef4444;
+    --accent-light: #450a0a;
+    --success: #22c55e;
+    --warning: #facc15;
+    --info: #60a5fa;
+    --code-bg: #262626;
+    --rule-passed: #14532d;
+    --rule-review: #713f12;
+    --rule-failed: #7f1d1d;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #171717;
+  --text: #fafafa;
+  --text-secondary: #a3a3a3;
+  --border: #262626;
+  --accent: #ef4444;
+  --accent-light: #450a0a;
+  --success: #22c55e;
+  --warning: #facc15;
+  --info: #60a5fa;
+  --code-bg: #262626;
+  --rule-passed: #14532d;
+  --rule-review: #713f12;
+  --rule-failed: #7f1d1d;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 2rem 1rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+section {
+  margin-bottom: 3rem;
+}
+
+h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  color: var(--text);
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--text);
+}
+
+p, li {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.flow-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.flow-step::after {
+  content: '';
+  position: absolute;
+  left: 2rem;
+  top: 4rem;
+  width: 2px;
+  height: calc(100% + 2rem);
+  background: var(--border);
+}
+
+.flow-step:last-child::after {
+  display: none;
+}
+
+.step-number {
+  min-width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.step-desc {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.step-tech {
+  font-size: 0.875rem;
+  color: var(--accent);
+  font-family: 'Courier New', monospace;
+}
+
+.architecture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.arch-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.arch-card h4 {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon {
+  font-size: 1.5rem;
+}
+
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tech-badge {
+  padding: 0.5rem 1rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rules-table th {
+  background: var(--code-bg);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+}
+
+.rules-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.rules-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rule-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rule-status.passed {
+  background: var(--rule-passed);
+  color: var(--success);
+}
+
+.rule-status.needs-review {
+  background: var(--rule-review);
+  color: #92400e;
+}
+
+.rule-status.failed {
+  background: var(--rule-failed);
+  color: var(--accent);
+}
+
+.db-schema {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.db-table {
+  margin-bottom: 2rem;
+}
+
+.db-table h4 {
+  margin-top: 0;
+  color: var(--accent);
+  font-family: 'Courier New', monospace;
+}
+
+.schema-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.schema-table th {
+  background: var(--code-bg);
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+}
+
+.schema-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.schema-table code {
+  background: var(--code-bg);
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  color: var(--accent);
+}
+
+.api-endpoint {
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.api-endpoint h4 {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.http-method {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--accent);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.http-method.get {
+  background: var(--info);
+}
+
+.http-method.delete {
+  background: var(--accent);
+}
+
+.code-block {
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.code-block code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: var(--text);
+  white-space: pre;
+}
+
+.info-box {
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent);
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.info-box strong {
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+ul, ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+.file-tree {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.file-tree .dir {
+  color: var(--info);
+  font-weight: 600;
+}
+
+.file-tree .file {
+  color: var(--text-secondary);
+}
+
+.highlight {
+  background: var(--accent-light);
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .architecture-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-step {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .flow-step::after {
+    left: 2rem;
+  }
+}
+</style>
+
+<div class="container">
+  <header>
+    <h1>🍔 Foodie Check</h1>
+    <p class="subtitle">Food Packaging Compliance Scanner - Complete Technical Documentation</p>
+    <div class="tech-stack">
+      <span class="tech-badge">Next.js 16</span>
+      <span class="tech-badge">FastAPI</span>
+      <span class="tech-badge">PaddleOCR</span>
+      <span class="tech-badge">PostgreSQL</span>
+      <span class="tech-badge">Python</span>
+      <span class="tech-badge">TypeScript</span>
+    </div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="workflow">User Workflow</button>
+    <button class="tab-btn" data-tab="architecture">Architecture</button>
+    <button class="tab-btn" data-tab="rules">Rule Engine</button>
+    <button class="tab-btn" data-tab="database">Database</button>
+    <button class="tab-btn" data-tab="api">API Endpoints</button>
+  </nav>
+
+  <!-- Overview Tab -->
+  <div class="tab-content active" data-content="overview">
+    <section>
+      <h2>What is Foodie Check?</h2>
+      <p>Foodie Check is an AI-powered compliance verification system for food packaging that ensures products meet India's Legal Metrology Act requirements. Built for Smart India Hackathon (SIH), it uses OCR and intelligent rule validation to scan packaging images and generate instant compliance reports.</p>
+
+      <div class="info-box">
+        <strong>Problem Statement</strong>
+        Manual verification of food packaging compliance is time-consuming and error-prone. Foodie Check automates this process using computer vision and rule-based validation.
+      </div>
+
+      <h3>Key Features</h3>
+      <div class="architecture-grid">
+        <div class="arch-card">
+          <h4><span class="icon">📸</span> Dual Image Scanning</h4>
+          <p>Upload front and back packaging images for comprehensive text extraction using PaddleOCR.</p>
+        </div>
+        <div class="arch-card">
+          <h4><span class="icon">🔍</span> Smart Field Mapping</h4>
+          <p>Intelligent pattern matching to extract MRP, manufacturing date, FSSAI license, net quantity, and more.</p>
+        </div>
+        <div class="arch-card">
+          <h4><span class="icon">✅</span> Legal Compliance Check</h4>
+          <p>Validates against 8 Legal Metrology Act rules with passed/needs review/failed status.</p>
+        </div>
+        <div class="arch-card">
+          <h4><span class="icon">📊</span> Instant Reports</h4>
+          <p>Visual compliance dashboard with detailed evidence and regulatory references.</p>
+        </div>
+        <div class="arch-card">
+          <h4><span class="icon">💾</span> History Tracking</h4>
+          <p>PostgreSQL database stores all scans with full OCR data and compliance results.</p>
+        </div>
+        <div class="arch-card">
+          <h4><span class="icon">🌐</span> Modern Web Interface</h4>
+          <p>Next.js 16 frontend with React 19, TailwindCSS, and responsive design.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Workflow Tab -->
+  <div class="tab-content" data-content="workflow">
+    <section>
+      <h2>Complete User Workflow</h2>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <div class="step-title">User Uploads Images</div>
+            <div class="step-desc">User visits the web app and uploads front and back images of food packaging</div>
+            <div class="step-tech">Frontend: apps/web/app/page.tsx</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <div class="step-title">API Call to Backend</div>
+            <div class="step-desc">Frontend sends FormData with both images to FastAPI endpoint</div>
+            <div class="step-tech">API: POST /evaluate or POST /scans</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <div class="step-title">OCR Text Extraction</div>
+            <div class="step-desc">PaddleOCR processes both images and extracts text blocks with confidence scores and bounding boxes</div>
+            <div class="step-tech">Engine: services/ocr-engine/main.py → run_ocr()</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <div class="step-title">Field Mapping</div>
+            <div class="step-desc">Pattern-based extraction identifies required fields using regex patterns</div>
+            <div class="step-tech">Mapper: services/ocr-engine/mapping/field_mapper.py</div>
+            <ul style="margin-top: 0.5rem;">
+              <li>MRP (Maximum Retail Price)</li>
+              <li>Net Quantity (weight/volume)</li>
+              <li>Manufacturing Date</li>
+              <li>Best Before / Expiry Date</li>
+              <li>FSSAI License Number</li>
+              <li>Manufacturer Address</li>
+              <li>Consumer Care Details</li>
+              <li>Common/Generic Name</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <div class="step-title">Rule Engine Validation</div>
+            <div class="step-desc">Each extracted field is validated against Legal Metrology Act rules</div>
+            <div class="step-tech">Engine: services/ocr-engine/rules/engine.py</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="rule-status passed">Passed</span> Field found with good confidence<br>
+              <span class="rule-status needs-review">Needs Review</span> Hedge phrase detected or multiple values<br>
+              <span class="rule-status failed">Failed</span> Field not found
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">6</div>
+          <div class="step-content">
+            <div class="step-title">Database Storage (Optional)</div>
+            <div class="step-desc">If using /scans endpoint, results are saved to PostgreSQL with user_id</div>
+            <div class="step-tech">Database: PostgreSQL via SQLAlchemy ORM</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">7</div>
+          <div class="step-content">
+            <div class="step-title">Response Returned</div>
+            <div class="step-desc">Backend returns JSON with fields, rule results, and summary counts</div>
+            <div class="step-tech">Response includes: extracted fields, 8 rule evaluations, pass/review/fail counts</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">8</div>
+          <div class="step-content">
+            <div class="step-title">Frontend Displays Report</div>
+            <div class="step-desc">Compliance report shown with color-coded table and detailed evidence</div>
+            <div class="step-tech">Component: apps/web/components/scan/LegalMetrologyTable.tsx</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Architecture Tab -->
+  <div class="tab-content" data-content="architecture">
+    <section>
+      <h2>System Architecture</h2>
+
+      <h3>Frontend Layer</h3>
+      <div class="arch-card">
+        <h4><span class="icon">⚛️</span> Next.js 16 Web Application</h4>
+        <p><strong>Location:</strong> <code>apps/web/</code></p>
+        <div class="file-tree">
+<span class="dir">apps/web/</span>
+├── <span class="dir">app/</span>
+│   └── <span class="file">page.tsx</span>              # Main upload + report page
+├── <span class="dir">components/</span>
+│   ├── <span class="dir">layout/</span>
+│   │   ├── <span class="file">Navbar.tsx</span>
+│   │   └── <span class="file">Footer.tsx</span>
+│   ├── <span class="dir">scan/</span>
+│   │   ├── <span class="file">UploadSection.tsx</span>   # Image upload cards
+│   │   ├── <span class="file">ReportSection.tsx</span>   # Compliance report display
+│   │   └── <span class="file">LegalMetrologyTable.tsx</span>  # Rule results table
+│   └── <span class="dir">ui/</span>
+│       └── <span class="file">Button.tsx</span>
+└── <span class="dir">lib/</span>
+    └── <span class="file">api.ts</span>                  # Backend API calls
+        </div>
+        <p><strong>Key Technologies:</strong> React 19, TypeScript, TailwindCSS</p>
+        <p><strong>Main Flow:</strong> User uploads images → Calls backend API → Displays compliance report</p>
+      </div>
+
+      <h3>Backend Layer</h3>
+      <div class="arch-card">
+        <h4><span class="icon">🐍</span> FastAPI OCR Service</h4>
+        <p><strong>Location:</strong> <code>services/ocr-engine/</code></p>
+        <div class="file-tree">
+<span class="dir">services/ocr-engine/</span>
+├── <span class="file">main.py</span>                      # FastAPI app + endpoints
+├── <span class="file">database.py</span>                  # PostgreSQL connection
+├── <span class="file">models.py</span>                    # SQLAlchemy models
+├── <span class="dir">mapping/</span>
+│   ├── <span class="file">field_mapper.py</span>          # Extract fields from OCR
+│   └── <span class="file">patterns.py</span>              # Regex patterns for fields
+├── <span class="dir">rules/</span>
+│   ├── <span class="file">engine.py</span>                # Run rule validation
+│   ├── <span class="file">checks.py</span>                # Check functions
+│   └── <span class="file">ruleset.json</span>             # 8 Legal Metrology rules
+└── <span class="dir">results/</span>
+    ├── <span class="file">latest_scan.json</span>         # Debug: raw OCR output
+    └── <span class="file">latest_report.json</span>       # Debug: compliance report
+        </div>
+        <p><strong>Key Technologies:</strong> FastAPI, PaddleOCR, SQLAlchemy, PostgreSQL</p>
+      </div>
+
+      <h3>Core Processing Pipeline</h3>
+      <div class="architecture-grid">
+        <div class="arch-card">
+          <h4>1️⃣ OCR Engine</h4>
+          <p><strong>Technology:</strong> PaddleOCR</p>
+          <p>Extracts text blocks with confidence scores and bounding boxes from images</p>
+          <div class="code-block"><code>{
+  "text": "MRP: Rs. 150",
+  "confidence": 0.95,
+  "bbox": [[x1,y1], [x2,y2], ...]
+}</code></div>
+        </div>
+
+        <div class="arch-card">
+          <h4>2️⃣ Field Mapper</h4>
+          <p><strong>Location:</strong> mapping/field_mapper.py</p>
+          <p>Uses regex patterns to identify and extract required fields:</p>
+          <ul>
+            <li>Pattern matching per text block</li>
+            <li>Fuzzy matching across combined text</li>
+            <li>Conflict detection between front/back</li>
+            <li>Address scoring with keyword matching</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <h4>3️⃣ Rule Engine</h4>
+          <p><strong>Location:</strong> rules/engine.py</p>
+          <p>Validates each field against Legal Metrology Act requirements:</p>
+          <ul>
+            <li><code>check_presence</code>: Basic existence check</li>
+            <li><code>check_presence_with_hedge</code>: Allows "see cap" phrases</li>
+            <li><code>check_presence_multi</code>: Multiple address validation</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Database Layer</h3>
+      <div class="arch-card">
+        <h4><span class="icon">🗄️</span> PostgreSQL Database</h4>
+        <p>Stores scan results with full OCR data and compliance evaluations</p>
+        <p><strong>Tables:</strong> scans, compliance_rules, users (optional)</p>
+        <p><strong>Features:</strong></p>
+        <ul>
+          <li>JSONB columns for flexible OCR and rule data storage</li>
+          <li>Indexed on user_id, created_at, overall_status</li>
+          <li>Auto-updated timestamps with triggers</li>
+          <li>Scan history with pagination support</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <!-- Rules Tab -->
+  <div class="tab-content" data-content="rules">
+    <section>
+      <h2>Legal Metrology Act Rules</h2>
+      <p>Foodie Check validates packaging against 8 mandatory declarations from India's Legal Metrology Act, 2009.</p>
+
+      <table class="rules-table">
+        <thead>
+          <tr>
+            <th>Rule ID</th>
+            <th>Legal Clause</th>
+            <th>Field</th>
+            <th>Description</th>
+            <th>Check Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>LM6_1_b</code></td>
+            <td>Rule 6(1)(b)</td>
+            <td>common_name</td>
+            <td>Common or generic name must be declared</td>
+            <td><span class="rule-status passed">presence</span></td>
+          </tr>
+          <tr>
+            <td><code>LM6_1_c</code></td>
+            <td>Rule 6(1)(c)</td>
+            <td>net_quantity</td>
+            <td>Net quantity must be declared</td>
+            <td><span class="rule-status passed">presence</span></td>
+          </tr>
+          <tr>
+            <td><code>LM6_1_d</code></td>
+            <td>Rule 6(1)(d)</td>
+            <td>mrp</td>
+            <td>MRP inclusive of taxes must be declared</td>
+            <td><span class="rule-status needs-review">presence_with_hedge</span></td>
+          </tr>
+          <tr>
+            <td><code>LM6_1_e</code></td>
+            <td>Rule 6(1)(e)</td>
+            <td>mfg_date</td>
+            <td>Month and year of manufacture/packing must be declared</td>
+            <td><span class="rule-status needs-review">presence_with_hedge</span></td>
+          </tr>
+          <tr>
+            <td><code>LM6_1_a</code></td>
+            <td>Rule 6(1)(a)</td>
+            <td>manufacturer_address</td>
+            <td>Name and address of manufacturer/packer must be declared</td>
+            <td><span class="rule-status needs-review">presence_multi</span></td>
+          </tr>
+          <tr>
+            <td><code>LM6_1_f</code></td>
+            <td>Rule 6(1)(f)</td>
+            <td>best_before</td>
+            <td>Best before / expiry date must be declared</td>
+            <td><span class="rule-status needs-review">presence_with_hedge</span></td>
+          </tr>
+          <tr>
+            <td><code>LM6_1_g</code></td>
+            <td>Rule 6(1)(g)</td>
+            <td>consumer_care</td>
+            <td>Consumer care details must be declared</td>
+            <td><span class="rule-status passed">presence</span></td>
+          </tr>
+          <tr>
+            <td><code>FSSAI</code></td>
+            <td>FSS Act 2006</td>
+            <td>fssai_license</td>
+            <td>FSSAI license number must be displayed</td>
+            <td><span class="rule-status passed">presence</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Check Types Explained</h3>
+      <div class="architecture-grid">
+        <div class="arch-card">
+          <h4><span class="rule-status passed">presence</span></h4>
+          <p><strong>Logic:</strong> Field must exist with valid data</p>
+          <p><strong>Returns:</strong></p>
+          <ul>
+            <li>✅ Passed: Field found</li>
+            <li>⚠️ Needs Review: Conflict between front/back</li>
+            <li>❌ Failed: Field not found</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <h4><span class="rule-status needs-review">presence_with_hedge</span></h4>
+          <p><strong>Logic:</strong> Field must exist OR hedge phrase detected</p>
+          <p><strong>Hedge phrases:</strong> "see cap", "see bottom", "printed on lid", etc.</p>
+          <p><strong>Returns:</strong></p>
+          <ul>
+            <li>✅ Passed: Field found</li>
+            <li>⚠️ Needs Review: Hedge phrase detected</li>
+            <li>❌ Failed: Neither field nor hedge phrase</li>
+          </ul>
+        </div>
+
+        <div class="arch-card">
+          <h4><span class="rule-status needs-review">presence_multi</span></h4>
+          <p><strong>Logic:</strong> Multiple address blocks detected (manufacturer address)</p>
+          <p><strong>Returns:</strong></p>
+          <ul>
+            <li>✅ Passed: One clear address found</li>
+            <li>⚠️ Needs Review: Multiple addresses found</li>
+            <li>❌ Failed: No address found</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Pattern Matching Examples</h3>
+      <div class="code-block"><code>// Net Quantity Pattern
+(?:Net\s*(?:Wt|Weight|Qty|Quantity)\.?\s*[:\-\.]?\s*(\d+[\.,]?\d*)\s*(?:g|kg|ml|ltr))
+
+// MRP Pattern
+(?:M\.?\s*R\.?\s*P\.?|Maximum\s*Retail\s*Price)\s*[:\-\.]?\s*[₹Rs\.]*\s*(\d+[\.,]?\d*)
+
+// FSSAI License Pattern
+(?:FSSAI\s*(?:Lic|License)?\.?\s*(?:No\.?)?)\s*[:\-\.]?\s*(\d[\d\s]{10,})</code></div>
+    </section>
+  </div>
+
+  <!-- Database Tab -->
+  <div class="tab-content" data-content="database">
+    <section>
+      <h2>PostgreSQL Database Schema</h2>
+
+      <div class="db-schema">
+        <div class="db-table">
+          <h4>Table 1: scans</h4>
+          <p>Primary table storing scan results and compliance evaluations</p>
+          <table class="schema-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Constraints</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>UUID</td>
+                <td>PRIMARY KEY</td>
+                <td>Unique scan identifier</td>
+              </tr>
+              <tr>
+                <td><code>user_id</code></td>
+                <td>VARCHAR(255)</td>
+                <td>NOT NULL, INDEX</td>
+                <td>User who performed the scan</td>
+              </tr>
+              <tr>
+                <td><code>front_image_url</code></td>
+                <td>VARCHAR(512)</td>
+                <td>NOT NULL</td>
+                <td>URL/path to front packaging image</td>
+              </tr>
+              <tr>
+                <td><code>back_image_url</code></td>
+                <td>VARCHAR(512)</td>
+                <td>NOT NULL</td>
+                <td>URL/path to back packaging image</td>
+              </tr>
+              <tr>
+                <td><code>raw_ocr</code></td>
+                <td>JSONB</td>
+                <td>NULL</td>
+                <td>Raw OCR text blocks from both images</td>
+              </tr>
+              <tr>
+                <td><code>extracted_fields</code></td>
+                <td>JSONB</td>
+                <td>NULL</td>
+                <td>Mapped fields (MRP, dates, addresses, etc.)</td>
+              </tr>
+              <tr>
+                <td><code>rules_result</code></td>
+                <td>JSONB</td>
+                <td>NULL</td>
+                <td>Array of 8 rule evaluation results</td>
+              </tr>
+              <tr>
+                <td><code>passed</code></td>
+                <td>INTEGER</td>
+                <td>DEFAULT 0</td>
+                <td>Count of passed rules</td>
+              </tr>
+              <tr>
+                <td><code>needs_review</code></td>
+                <td>INTEGER</td>
+                <td>DEFAULT 0</td>
+                <td>Count of rules needing manual review</td>
+              </tr>
+              <tr>
+                <td><code>failed</code></td>
+                <td>INTEGER</td>
+                <td>DEFAULT 0</td>
+                <td>Count of failed rules</td>
+              </tr>
+              <tr>
+                <td><code>overall_status</code></td>
+                <td>VARCHAR(20)</td>
+                <td>NOT NULL</td>
+                <td>'compliant' or 'non_compliant'</td>
+              </tr>
+              <tr>
+                <td><code>created_at</code></td>
+                <td>TIMESTAMP</td>
+                <td>DEFAULT NOW(), INDEX</td>
+                <td>Scan creation timestamp</td>
+              </tr>
+              <tr>
+                <td><code>updated_at</code></td>
+                <td>TIMESTAMP</td>
+                <td>DEFAULT NOW()</td>
+                <td>Last update timestamp</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="db-table">
+          <h4>Table 2: compliance_rules</h4>
+          <p>Reference table storing Legal Metrology Act rules</p>
+          <table class="schema-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Constraints</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>VARCHAR(50)</td>
+                <td>PRIMARY KEY</td>
+                <td>Rule ID (e.g., 'LM6_1_b', 'FSSAI')</td>
+              </tr>
+              <tr>
+                <td><code>field_name</code></td>
+                <td>VARCHAR(100)</td>
+                <td>NOT NULL</td>
+                <td>Field being validated</td>
+              </tr>
+              <tr>
+                <td><code>clause</code></td>
+                <td>VARCHAR(100)</td>
+                <td>NOT NULL</td>
+                <td>Legal reference (e.g., 'Rule 6(1)(b)')</td>
+              </tr>
+              <tr>
+                <td><code>check_type</code></td>
+                <td>VARCHAR(50)</td>
+                <td>NOT NULL</td>
+                <td>Validation type</td>
+              </tr>
+              <tr>
+                <td><code>description</code></td>
+                <td>TEXT</td>
+                <td>NOT NULL</td>
+                <td>Human-readable rule description</td>
+              </tr>
+              <tr>
+                <td><code>is_active</code></td>
+                <td>BOOLEAN</td>
+                <td>DEFAULT TRUE</td>
+                <td>Whether rule is currently enforced</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="db-table">
+          <h4>Table 3: users (Optional)</h4>
+          <p>User account information if not using external auth</p>
+          <table class="schema-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Constraints</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>UUID</td>
+                <td>PRIMARY KEY</td>
+                <td>Unique user identifier</td>
+              </tr>
+              <tr>
+                <td><code>email</code></td>
+                <td>VARCHAR(255)</td>
+                <td>UNIQUE, NOT NULL</td>
+                <td>User email</td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>VARCHAR(255)</td>
+                <td>NULL</td>
+                <td>User display name</td>
+              </tr>
+              <tr>
+                <td><code>created_at</code></td>
+                <td>TIMESTAMP</td>
+                <td>DEFAULT NOW()</td>
+                <td>Account creation date</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Important Notes for Backend Developer:</strong>
+        <ul>
+          <li>Use <span class="highlight">JSONB</span> (not JSON) for better query performance on JSON fields</li>
+          <li><span class="highlight">user_id</span> is VARCHAR to support external auth systems (Firebase, Auth0, etc.)</li>
+          <li>Store image URLs (S3/Cloudflare R2), not local paths</li>
+          <li>All timestamps are UTC</li>
+          <li>Create indexes on <code>user_id</code>, <code>created_at</code>, and <code>overall_status</code></li>
+        </ul>
+      </div>
+
+      <h3>JSON Field Structures</h3>
+
+      <h4>raw_ocr Structure</h4>
+      <div class="code-block"><code>{
+  "front": [
+    {
+      "text": "MRP: Rs. 150",
+      "confidence": 0.95,
+      "bbox": [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
+    }
+  ],
+  "back": [...]
+}</code></div>
+
+      <h4>extracted_fields Structure</h4>
+      <div class="code-block"><code>{
+  "common_name": {
+    "value": "Mixed Fruit Jam",
+    "confidence": 0.92,
+    "source": [[x1, y1], ...]
+  },
+  "mrp": {
+    "value": "Rs. 150",
+    "confidence": 0.95,
+    "source": [[x1, y1], ...]
+  },
+  "net_quantity": {...},
+  "manufacturer_address": [...],
+  ...
+}</code></div>
+
+      <h4>rules_result Structure</h4>
+      <div class="code-block"><code>[
+  {
+    "rule_id": "LM6_1_b",
+    "clause": "Rule 6(1)(b)",
+    "field": "common_name",
+    "description": "Common or generic name must be declared",
+    "status": "passed",
+    "evidence": {...}
+  },
+  ...
+]</code></div>
+    </section>
+  </div>
+
+  <!-- API Tab -->
+  <div class="tab-content" data-content="api">
+    <section>
+      <h2>API Endpoints</h2>
+      <p>FastAPI backend running on <code>http://localhost:8000</code></p>
+
+      <h3>Core Endpoints (No Database)</h3>
+
+      <div class="api-endpoint">
+        <h4>
+          <span class="http-method">POST</span>
+          <span>/ocr</span>
+        </h4>
+        <p><strong>Description:</strong> Raw OCR text extraction only</p>
+        <p><strong>Input:</strong> FormData with <code>front</code> and <code>back</code> image files</p>
+        <p><strong>Output:</strong> Raw OCR blocks with text, confidence, and bounding boxes</p>
+        <div class="code-block"><code>// Example Response
+{
+  "front": [{"text": "...", "confidence": 0.95, "bbox": [...]}],
+  "back": [...]
+}</code></div>
+      </div>
+
+      <div class="api-endpoint">
+        <h4>
+          <span class="http-method">POST</span>
+          <span>/evaluate</span>
+        </h4>
+        <p><strong>Description:</strong> OCR + compliance check (no database save)</p>
+        <p><strong>Input:</strong> FormData with <code>front</code> and <code>back</code> image files</p>
+        <p><strong>Output:</strong> Extracted fields, rule results, and summary</p>
+        <div class="code-block"><code>// Example Response
+{
+  "fields": {
+    "common_name": {"value": "...", "confidence": 0.92, ...},
+    "mrp": {...},
+    ...
+  },
+  "rules": [
+    {"rule_id": "LM6_1_b", "status": "passed", ...},
+    ...
+  ],
+  "summary": {
+    "passed": 6,
+    "needs_review": 1,
+    "failed": 1
+  }
+}</code></div>
+      </div>
+
+      <h3>Database-Backed Endpoints</h3>
+
+      <div class="api-endpoint">
+        <h4>
+          <span class="http-method">POST</span>
+          <span>/scans</span>
+        </h4>
+        <p><strong>Description:</strong> Run OCR + compliance and save to database</p>
+        <p><strong>Input:</strong> FormData with <code>front</code>, <code>back</code>, and optional <code>user_id</code> query param</p>
+        <p><strong>Output:</strong> Same as /evaluate plus <code>scan_id</code> and <code>created_at</code></p>
+        <div class="code-block"><code>curl -X POST "http://localhost:8000/scans?user_id=user123" \
+  -F "front=@front.jpg" \
+  -F "back=@back.jpg"</code></div>
+      </div>
+
+      <div class="api-endpoint">
+        <h4>
+          <span class="http-method get">GET</span>
+          <span>/scans</span>
+        </h4>
+        <p><strong>Description:</strong> List scan history for a user</p>
+        <p><strong>Query Params:</strong></p>
+        <ul>
+          <li><code>user_id</code> (required): User identifier</li>
+          <li><code>limit</code> (optional, default 20): Max results</li>
+          <li><code>offset</code> (optional, default 0): Pagination offset</li>
+        </ul>
+        <div class="code-block"><code>curl "http://localhost:8000/scans?user_id=user123&limit=20&offset=0"
+
+// Response
+{
+  "total": 50,
+  "scans": [
+    {
+      "scan_id": "uuid",
+      "front_image_url": "front.jpg",
+      "passed": 6,
+      "needs_review": 1,
+      "failed": 1,
+      "overall_status": "non_compliant",
+      "created_at": "2026-09-05T05:50:00"
+    },
+    ...
+  ]
+}</code></div>
+      </div>
+
+      <div class="api-endpoint">
+        <h4>
+          <span class="http-method get">GET</span>
+          <span>/scans/{scan_id}</span>
+        </h4>
+        <p><strong>Description:</strong> Get full details of a single scan</p>
+        <p><strong>Output:</strong> Complete scan data including <code>raw_ocr</code> and <code>rules_result</code></p>
+      </div>
+
+      <div class="api-endpoint">
+        <h4>
+          <span class="http-method delete">DELETE</span>
+          <span>/scans/{scan_id}</span>
+        </h4>
+        <p><strong>Description:</strong> Delete a scan by ID</p>
+        <p><strong>Output:</strong> Confirmation message</p>
+      </div>
+
+      <div class="api-endpoint">
+        <h4>
+          <span class="http-method get">GET</span>
+          <span>/scans/stats/summary</span>
+        </h4>
+        <p><strong>Description:</strong> Aggregate compliance statistics</p>
+        <p><strong>Query Params:</strong> <code>user_id</code></p>
+        <div class="code-block"><code>// Response
+{
+  "total_scans": 50,
+  "compliant": 35,
+  "non_compliant": 15,
+  "compliance_rate": 70.0
+}</code></div>
+      </div>
+
+      <h3>CORS Configuration</h3>
+      <div class="info-box">
+        <strong>Allowed Origins:</strong> <code>http://localhost:3000</code> (Next.js dev server)
+        <br><strong>Update for Production:</strong> Add your production frontend URL to CORS middleware
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+// Tab switching
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetTab = btn.dataset.tab;
+
+    // Update active button
+    tabBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Show target content
+    tabContents.forEach(content => {
+      if (content.dataset.content === targetTab) {
+        content.classList.add('active');
+      } else {
+        content.classList.remove('active');
+      }
+    });
+  });
+});
+</script>

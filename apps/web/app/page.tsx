@@ -45,9 +45,9 @@ export default function Home() {
       const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
       history.unshift(scanRecord);
       localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 50))); // keep last 50
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to generate report. Please ensure the OCR service is running on http://localhost:8000");
+      alert(`Error generating report: ${err.message || err}`);
     } finally {
       setLoading(false);
     }

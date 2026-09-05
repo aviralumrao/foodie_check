@@ -3,5 +3,8 @@
   { "id": "LM6_1_c", "field": "net_quantity", "clause": "Rule 6(1)(c)", "check": "presence", "description": "Net quantity must be declared" },
   { "id": "LM6_1_d", "field": "mrp", "clause": "Rule 6(1)(d)", "check": "presence_with_hedge", "description": "MRP inclusive of taxes must be declared" },
   { "id": "LM6_1_e", "field": "mfg_date", "clause": "Rule 6(1)(e)", "check": "presence_with_hedge", "description": "Month and year of manufacture/packing must be declared" },
-  { "id": "LM6_1_a", "field": "manufacturer_address", "clause": "Rule 6(1)(a)", "check": "presence_multi", "description": "Name and address of manufacturer/packer must be declared" }
+  { "id": "LM6_1_a", "field": "manufacturer_address", "clause": "Rule 6(1)(a)", "check": "presence_multi", "description": "Name and address of manufacturer/packer must be declared" },
+  { "id": "LM6_1_f", "field": "best_before", "clause": "Rule 6(1)(f)", "check": "presence_with_hedge", "description": "Best before / expiry date must be declared" },
+  { "id": "LM6_1_g", "field": "consumer_care", "clause": "Rule 6(1)(g)", "check": "presence", "description": "Consumer care details must be declared" },
+  { "id": "FSSAI", "field": "fssai_license", "clause": "FSS Act 2006", "check": "presence", "description": "FSSAI license number must be displayed" }
 ]
