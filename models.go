@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // ---------- Product ----------
 
@@ -121,6 +124,62 @@ type HistoryEntry struct {
 	ProductName       string    `json:"product_name"`
 	Brand             string    `json:"brand"`
 	Category          string    `json:"category"`
+}
+
+// ---------- Scan ----------
+
+// Scan represents a product label scan submitted for compliance checking.
+// The rules_result field stores the full array of per-rule evaluation results as JSONB.
+type Scan struct {
+	ID              string          `json:"id"`
+	UserID          string          `json:"user_id"`
+	FrontImageURL   string          `json:"front_image_url"`
+	BackImageURL    string          `json:"back_image_url"`
+	RawOCR          json.RawMessage `json:"raw_ocr"`
+	ExtractedFields json.RawMessage `json:"extracted_fields"`
+	RulesResult     json.RawMessage `json:"rules_result"`
+	Passed          int             `json:"passed"`
+	NeedsReview     int             `json:"needs_review"`
+	Failed          int             `json:"failed"`
+	OverallStatus   string          `json:"overall_status"`
+	CreatedAt       time.Time       `json:"created_at"`
+	UpdatedAt       time.Time       `json:"updated_at"`
+}
+
+type CreateScanRequest struct {
+	UserID          string          `json:"user_id"`
+	FrontImageURL   string          `json:"front_image_url"`
+	BackImageURL    string          `json:"back_image_url"`
+	RawOCR          json.RawMessage `json:"raw_ocr"`
+	ExtractedFields json.RawMessage `json:"extracted_fields"`
+	RulesResult     json.RawMessage `json:"rules_result"`
+	Passed          int             `json:"passed"`
+	NeedsReview     int             `json:"needs_review"`
+	Failed          int             `json:"failed"`
+	OverallStatus   string          `json:"overall_status"`
+}
+
+// ---------- Compliance Rule ----------
+
+// ComplianceRule defines a single regulatory field check.
+type ComplianceRule struct {
+	ID          string    `json:"id"`
+	FieldName   string    `json:"field_name"`
+	Clause      string    `json:"clause"`
+	CheckType   string    `json:"check_type"`
+	Description string    `json:"description"`
+	IsActive    bool      `json:"is_active"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type CreateComplianceRuleRequest struct {
+	ID          string `json:"id"`
+	FieldName   string `json:"field_name"`
+	Clause      string `json:"clause"`
+	CheckType   string `json:"check_type"`
+	Description string `json:"description"`
+	IsActive    *bool  `json:"is_active"`
 }
 
 // ---------- Generic responses ----------

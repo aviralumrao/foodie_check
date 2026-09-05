@@ -286,3 +286,91 @@ func dbListHistory(ctx context.Context) ([]HistoryEntry, error) {
 	}
 	return list, rows.Err()
 }
+
+// ==================== Scan queries ====================
+
+func dbCreateScan(ctx context.Context, r CreateScanRequest) (Scan, error) {
+	var s Scan
+	err := DB.QueryRow(ctx,
+		`INSERT INTO scans (user_id, front_image_url, back_image_url, raw_ocr, extracted_fields,
+		                    rules_result, passed, needs_review, failed, overall_status)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		 RETURNING id, user_id, front_image_url, back_image_url, raw_ocr, extracted_fields,
+		           rules_result, passed, needs_review, failed, overall_status, created_at, updated_at`,
+		r.UserID, r.FrontImageURL, r.BackImageURL, r.RawOCR, r.ExtractedFields,
+		r.RulesResult, r.Passed, r.NeedsReview, r.Failed, r.OverallStatus,
+	).Scan(&s.ID, &s.UserID, &s.FrontImageURL, &s.BackImageURL, &s.RawOCR, &s.ExtractedFields,
+		&s.RulesResult, &s.Passed, &s.NeedsReview, &s.Failed, &s.OverallStatus, &s.CreatedAt, &s.UpdatedAt)
+	return s, err
+}
+
+func dbListScans(ctx context.Context) ([]Scan, error) {
+	rows, err := DB.Query(ctx,
+		`SELECT id, user_id, front_image_url, back_image_url, raw_ocr, extracted_fields,
+		        rules_result, passed, needs_review, failed, overall_status, created_at, updated_at
+		 FROM scans ORDER BY created_at DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var list []Scan
+	for rows.Next() {
+		var s Scan
+		if err := rows.Scan(&s.ID, &s.UserID, &s.FrontImageURL, &s.BackImageURL, &s.RawOCR, &s.ExtractedFields,
+			&s.RulesResult, &s.Passed, &s.NeedsReview, &s.Failed, &s.OverallStatus, &s.CreatedAt, &s.UpdatedAt); err != nil {
+			return nil, err
+		}
+		list = append(list, s)
+	}
+	return list, rows.Err()
+}
+
+func dbGetScan(ctx context.Context, id string) (Scan, error) {
+	var s Scan
+	err := DB.QueryRow(ctx,
+		`SELECT id, user_id, front_image_url, back_image_url, raw_ocr, extracted_fields,
+		        rules_result, passed, needs_review, failed, overall_status, created_at, updated_at
+		 FROM scans WHERE id = $1`, id,
+	).Scan(&s.ID, &s.UserID, &s.FrontImageURL, &s.BackImageURL, &s.RawOCR, &s.ExtractedFields,
+		&s.RulesResult, &s.Passed, &s.NeedsReview, &s.Failed, &s.OverallStatus, &s.CreatedAt, &s.UpdatedAt)
+	return s, err
+}
+
+// ==================== Compliance Rule queries ====================
+
+func dbCreateComplianceRule(ctx context.Context, r CreateComplianceRuleRequest) (ComplianceRule, error) {
+	var cr ComplianceRule
+	isActive := true
+	if r.IsActive != nil {
+		isActive = *r.IsActive
+	}
+	err := DB.QueryRow(ctx,
+		`INSERT INTO compliance_rules (id, field_name, clause, check_type, description, is_active)
+		 VALUES ($1, $2, $3, $4, $5, $6)
+		 RETURNING id, field_name, clause, check_type, description, is_active, created_at, updated_at`,
+		r.ID, r.FieldName, r.Clause, r.CheckType, r.Description, isActive,
+	).Scan(&cr.ID, &cr.FieldName, &cr.Clause, &cr.CheckType, &cr.Description, &cr.IsActive, &cr.CreatedAt, &cr.UpdatedAt)
+	return cr, err
+}
+
+func dbListComplianceRules(ctx context.Context) ([]ComplianceRule, error) {
+	rows, err := DB.Query(ctx,
+		`SELECT id, field_name, clause, check_type, description, is_active, created_at, updated_at
+		 FROM compliance_rules ORDER BY id ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var list []ComplianceRule
+	for rows.Next() {
+		var cr ComplianceRule
+		if err := rows.Scan(&cr.ID, &cr.FieldName, &cr.Clause, &cr.CheckType, &cr.Description,
+			&cr.IsActive, &cr.CreatedAt, &cr.UpdatedAt); err != nil {
+			return nil, err
+		}
+		list = append(list, cr)
+	}
+	return list, rows.Err()
+}
