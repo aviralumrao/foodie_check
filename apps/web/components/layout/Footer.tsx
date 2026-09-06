@@ -52,29 +52,19 @@ return (
 
     <div>
       <h2 className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300"
-        data-testid="footer-contact-heading">
-        Stay curious
+        data-testid="footer-focus-heading">
+        Compliance focus
       </h2>
 
-      <p className="mb-4 text-sm leading-6 text-emerald-100/60" data-testid="footer-contact-copy">
-        Questions, ideas, or just want to say hello?
+      <p className="text-sm leading-6 text-emerald-100/60" data-testid="footer-focus-copy">
+        Clear checks for labels, declarations, and packaged food requirements.
       </p>
-
-      <a href="mailto:hello@packsure.app"
-        className="text-sm font-bold text-emerald-300 transition-colors duration-200 hover:text-white"
-        data-testid="footer-email-link">
-        hello@packsure.app
-      </a>
     </div>
   </div>
 
   <div
     className="mx-auto mt-14 flex max-w-7xl flex-col gap-3 border-t border-emerald-800/70 pt-6 text-xs text-emerald-100/40 sm:flex-row sm:items-center sm:justify-between"
     data-testid="footer-bottom-bar">
-    <span data-testid="footer-copyright">
-      © 2024 Pack Sure. Built for simple choices.
-    </span>
-
     <span data-testid="footer-static-note">
       A static demo experience
     </span>

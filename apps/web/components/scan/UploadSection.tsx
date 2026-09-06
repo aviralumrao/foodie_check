@@ -7,6 +7,7 @@ interface UploadSectionProps {
   onFrontSelect: (file: File) => void;
   onBackSelect: (file: File) => void;
   onGenerate: () => void;
+  actionLabel?: string;
   loading?: boolean;
 }
 
@@ -16,6 +17,7 @@ export default function UploadSection({
   onFrontSelect,
   onBackSelect,
   onGenerate,
+  actionLabel = "Generate Report",
   loading = false,
 }: UploadSectionProps) {
   return (
@@ -40,7 +42,7 @@ export default function UploadSection({
       </div>
 
       <PillButton
-        text={loading ? "Scanning..." : "Generate Report"}
+        text={loading ? "Scanning..." : actionLabel}
         onClick={onGenerate}
       />
     </>

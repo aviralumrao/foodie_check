@@ -5,7 +5,6 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/navbar";
 import UploadSection from "@/components/scan/UploadSection";
 import ReportSection from "@/components/scan/ReportSection";
-import PillButton from "@/components/ui/Button";
 import { runOcrScan, EvaluateResponse } from "@/lib/api";
 import { pdf } from "@react-pdf/renderer";
 import { ReportPDF } from "@/components/scan/ReportPDF";
@@ -97,9 +96,9 @@ export default function Home() {
               onFrontSelect={() => {}}
               onBackSelect={() => {}}
               onGenerate={handleCheckAnother}
+              actionLabel="Check Another"
               loading={false}
             />
-            <PillButton text="Check Another" onClick={handleCheckAnother} />
 
             <ReportSection
               reportData={reportData}
