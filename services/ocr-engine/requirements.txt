@@ -6,6 +6,3 @@ paddlepaddle
 opencv-python-headless
 numpy
 pillow
-sqlalchemy
-psycopg2-binary
-python-dotenv
