@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, Menu, ScanLine, X, User } from "lucide-react";
+import Image from "next/image";
+import logo from "@/app/logo.png";
+import { ArrowUpRight, Menu, X, User } from "lucide-react";
 
 const navItems = [
   { label: "Home", href: "/", id: "navbar-home-link" },
@@ -26,17 +28,17 @@ export default function Navbar() {
           data-testid="navbar-brand-link"
         >
           <span
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-700 text-white shadow-lg shadow-emerald-900/15 transition-transform duration-200 group-hover:-translate-y-0.5"
+            className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg shadow-emerald-900/15 transition-transform duration-200 group-hover:-translate-y-0.5"
             data-testid="navbar-brand-mark"
           >
-            <ScanLine size={20} strokeWidth={2.2} aria-hidden="true" />
+            <Image src={logo} alt="Pack Sure logo" width={40} height={40} priority />
           </span>
 
           <span
             className="font-heading text-xl font-black tracking-[-0.04em]"
             data-testid="navbar-brand-name"
           >
-            Foodie Check
+            Pack Sure
           </span>
         </a>
 

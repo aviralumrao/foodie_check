@@ -29,7 +29,7 @@ export function ReportPDF({ report, scanId }: ReportPDFProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>Foodie Check — Compliance Report</Text>
+        <Text style={styles.title}>Pack Sure — Compliance Report</Text>
         <Text style={styles.subtitle}>Scan ID: {scanId} · Generated: {new Date().toLocaleString()}</Text>
 
         <View style={styles.summaryRow}>

@@ -1,4 +1,6 @@
-import { ArrowUpRight, ScanLine } from "lucide-react";
+import Image from "next/image";
+import logo from "@/app/logo.png";
+import { ArrowUpRight } from "lucide-react";
 
 const footerLinks = [
   { label: "Home", href: "/", id: "footer-home-link" },
@@ -12,13 +14,13 @@ return (
   <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.3fr_0.7fr_0.8fr]">
     <div>
       <a href="#home" className="mb-5 inline-flex items-center gap-3" data-testid="footer-brand-link">
-        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-400 text-emerald-950"
+        <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-white text-emerald-950"
           data-testid="footer-brand-mark">
-          <ScanLine size={20} aria-hidden="true" />
+          <Image src={logo} alt="Pack Sure logo" width={40} height={40} />
         </span>
 
         <span className="font-heading text-xl font-black tracking-[-0.04em]" data-testid="footer-brand-name">
-          Foodie Check
+          Pack Sure
         </span>
       </a>
 
@@ -58,10 +60,10 @@ return (
         Questions, ideas, or just want to say hello?
       </p>
 
-      <a href="mailto:hello@foodiecheck.app"
+      <a href="mailto:hello@packsure.app"
         className="text-sm font-bold text-emerald-300 transition-colors duration-200 hover:text-white"
         data-testid="footer-email-link">
-        hello@foodiecheck.app
+        hello@packsure.app
       </a>
     </div>
   </div>
@@ -70,7 +72,7 @@ return (
     className="mx-auto mt-14 flex max-w-7xl flex-col gap-3 border-t border-emerald-800/70 pt-6 text-xs text-emerald-100/40 sm:flex-row sm:items-center sm:justify-between"
     data-testid="footer-bottom-bar">
     <span data-testid="footer-copyright">
-      © 2024 Foodie Check. Built for simple choices.
+      © 2024 Pack Sure. Built for simple choices.
     </span>
 
     <span data-testid="footer-static-note">
