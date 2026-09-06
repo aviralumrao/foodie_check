@@ -7,6 +7,8 @@ import UploadSection from "@/components/scan/UploadSection";
 import ReportSection from "@/components/scan/ReportSection";
 import PillButton from "@/components/ui/Button";
 import { runOcrScan, EvaluateResponse } from "@/lib/api";
+import { pdf } from "@react-pdf/renderer";
+import { ReportPDF } from "@/components/scan/ReportPDF";
 
 export default function Home() {
   const [frontFile, setFrontFile] = useState<File | null>(null);
@@ -14,6 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState<EvaluateResponse | null>(null);
   const [scanTimestamp, setScanTimestamp] = useState<string>("");
+  const [scanId, setScanId] = useState<string>("");
 
   const handleGenerateReport = async () => {
     if (!frontFile || !backFile) {
@@ -26,25 +29,26 @@ export default function Home() {
       setReportData(result);
       setScanTimestamp(new Date().toLocaleString());
 
-      // Extract product name from common_name field
       const commonNameField = result.fields.common_name;
       const productName =
         commonNameField && !Array.isArray(commonNameField) && "value" in commonNameField
           ? commonNameField.value || "Unknown Product"
           : "Unknown Product";
 
+      const newScanId = `SC-${Date.now().toString().slice(-8)}`;
+      setScanId(newScanId);
+
       const scanRecord = {
-        id: Date.now().toString(),
+        id: newScanId,
         timestamp: new Date().toISOString(),
         productName,
         summary: result.summary,
         rules: result.rules,
       };
 
-      // Save to localStorage for history
       const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
       history.unshift(scanRecord);
-      localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 50))); // keep last 50
+      localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 50)));
     } catch (err: any) {
       console.error(err);
       alert(`Error generating report: ${err.message || err}`);
@@ -58,10 +62,18 @@ export default function Home() {
     setFrontFile(null);
     setBackFile(null);
     setScanTimestamp("");
+    setScanId("");
   };
 
-  const handleDownloadPDF = () => {
-    alert("PDF download feature coming soon!");
+  const handleDownloadPDF = async () => {
+    if (!reportData) return;
+    const blob = await pdf(<ReportPDF report={reportData} scanId={scanId} />).toBlob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `compliance-report-${scanId}.pdf`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -92,6 +104,7 @@ export default function Home() {
             <ReportSection
               reportData={reportData}
               scanTimestamp={scanTimestamp}
+              scanId={scanId}
               onDownloadPDF={handleDownloadPDF}
             />
           </>

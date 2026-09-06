@@ -8,22 +8,21 @@ import { EvaluateResponse } from "@/lib/api";
 interface ReportSectionProps {
   reportData: EvaluateResponse;
   scanTimestamp: string;
+  scanId: string;
   onDownloadPDF: () => void;
 }
 
 export default function ReportSection({
   reportData,
   scanTimestamp,
+  scanId,
   onDownloadPDF,
 }: ReportSectionProps) {
-  // Extract product name safely
   const commonNameField = reportData.fields.common_name;
   const productName =
     commonNameField && !Array.isArray(commonNameField) && "value" in commonNameField
       ? commonNameField.value || "Product Name Not Detected"
       : "Product Name Not Detected";
-
-  const scanId = `SC-${Date.now().toString().slice(-8)}`;
 
   return (
     <div className="w-full max-w-4xl mt-16 mb-12">
