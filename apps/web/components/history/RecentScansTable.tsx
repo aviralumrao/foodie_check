@@ -39,23 +39,31 @@ export default function RecentScansTable({ scans, onDownload }: RecentScansTable
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm">
-            {scans.slice(0, 10).map((scan, i) => (
-              <tr key={i} className="hover:bg-neutral-50/50 transition-colors">
-                <td className="p-4 font-medium text-neutral-800">
-                  {scan.productName}
-                </td>
-                <td className="p-4 text-neutral-600">{scan.timestamp}</td>
-                <td className="p-4 text-right pr-6">
-                  <button
-                    onClick={() => handleDownload(scan.id)}
-                    className="inline-flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors"
-                  >
-                    Download Report
-                    <Download size={14} />
-                  </button>
+            {scans.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="p-8 text-center text-neutral-500">
+                  No scans yet. Generate a report to see it here.
                 </td>
               </tr>
-            ))}
+            ) : (
+              scans.slice(0, 10).map((scan) => (
+                <tr key={scan.id} className="hover:bg-neutral-50/50 transition-colors">
+                  <td className="p-4 font-medium text-neutral-800">
+                    {scan.productName}
+                  </td>
+                  <td className="p-4 text-neutral-600">{scan.timestamp}</td>
+                  <td className="p-4 text-right pr-6">
+                    <button
+                      onClick={() => handleDownload(scan.id)}
+                      className="inline-flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors"
+                    >
+                      Download Report
+                      <Download size={14} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
