@@ -36,6 +36,57 @@ const techStack = [
   { name: "PostgreSQL", use: "Scan and compliance history storage" },
 ];
 
+const complianceChecks = [
+  {
+    ruleId: "LM6_1_b",
+    legalClause: "Rule 6(1)(b)",
+    field: "common_name",
+    description: "Common or generic name must be declared",
+  },
+  {
+    ruleId: "LM6_1_c",
+    legalClause: "Rule 6(1)(c)",
+    field: "net_quantity",
+    description: "Net quantity must be declared",
+  },
+  {
+    ruleId: "LM6_1_d",
+    legalClause: "Rule 6(1)(d)",
+    field: "mrp",
+    description: "MRP inclusive of taxes must be declared",
+  },
+  {
+    ruleId: "LM6_1_e",
+    legalClause: "Rule 6(1)(e)",
+    field: "mfg_date",
+    description: "Month and year of manufacture/packing must be declared",
+  },
+  {
+    ruleId: "LM6_1_a",
+    legalClause: "Rule 6(1)(a)",
+    field: "manufacturer_address",
+    description: "Name and address of manufacturer/packer must be declared",
+  },
+  {
+    ruleId: "LM6_1_f",
+    legalClause: "Rule 6(1)(f)",
+    field: "best_before",
+    description: "Best before / expiry date must be declared",
+  },
+  {
+    ruleId: "LM6_1_g",
+    legalClause: "Rule 6(1)(g)",
+    field: "consumer_care",
+    description: "Consumer care details must be declared",
+  },
+  {
+    ruleId: "FSSAI",
+    legalClause: "FSS Act 2006",
+    field: "fssai_license",
+    description: "FSSAI license number must be displayed",
+  },
+];
+
 export default function About() {
   return (
     <>
@@ -87,6 +138,43 @@ export default function About() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="w-full mb-16">
+          <h2 className="text-2xl font-bold mb-6">Compliance checks</h2>
+          <div className="overflow-hidden rounded-xl border border-[#2a2d32] bg-[#12181c] shadow-sm">
+            <table className="w-full border-collapse text-left text-sm text-[#f0eee6]">
+              <thead>
+                <tr className="bg-[#1d2329] text-[#f9f7f3]">
+                  <th className="px-5 py-4 font-bold">Rule ID</th>
+                  <th className="px-5 py-4 font-bold">Legal Clause</th>
+                  <th className="px-5 py-4 font-bold">Field</th>
+                  <th className="px-5 py-4 font-bold">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {complianceChecks.map((item, index) => (
+                  <tr
+                    key={item.ruleId}
+                    className={index % 2 === 0 ? "bg-[#11181d]" : "bg-[#171e25]"}
+                  >
+                    <td className="border-t border-[#2a2d32] px-5 py-4 font-medium text-[#ecf0f3]">
+                      {item.ruleId}
+                    </td>
+                    <td className="border-t border-[#2a2d32] px-5 py-4 text-[#dfe7ed]">
+                      {item.legalClause}
+                    </td>
+                    <td className="border-t border-[#2a2d32] px-5 py-4 text-[#dfe7ed]">
+                      {item.field}
+                    </td>
+                    <td className="border-t border-[#2a2d32] px-5 py-4 text-[#f3f5f7]">
+                      {item.description}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
 
