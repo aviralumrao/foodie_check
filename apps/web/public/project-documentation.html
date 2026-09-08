@@ -16,6 +16,9 @@
   --rule-passed: #dcfce7;
   --rule-review: #fef3c7;
   --rule-failed: #fee2e2;
+  --rule-passed-text: #166534;
+  --rule-review-text: #92400e;
+  --rule-failed-text: #991b1b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,9 +34,12 @@
     --warning: #facc15;
     --info: #60a5fa;
     --code-bg: #262626;
-    --rule-passed: #14532d;
-    --rule-review: #713f12;
-    --rule-failed: #7f1d1d;
+    --rule-passed: #bbf7d0;
+    --rule-review: #fde68a;
+    --rule-failed: #fecaca;
+    --rule-passed-text: #14532d;
+    --rule-review-text: #7c2d12;
+    --rule-failed-text: #7f1d1d;
   }
 }
 
@@ -49,9 +55,12 @@
   --warning: #facc15;
   --info: #60a5fa;
   --code-bg: #262626;
-  --rule-passed: #14532d;
-  --rule-review: #713f12;
-  --rule-failed: #7f1d1d;
+  --rule-passed: #bbf7d0;
+  --rule-review: #fde68a;
+  --rule-failed: #fecaca;
+  --rule-passed-text: #14532d;
+  --rule-review-text: #7c2d12;
+  --rule-failed-text: #7f1d1d;
 }
 
 * {
@@ -308,22 +317,24 @@ p, li {
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .rule-status.passed {
   background: var(--rule-passed);
-  color: var(--success);
+  color: var(--rule-passed-text);
 }
 
 .rule-status.needs-review {
   background: var(--rule-review);
-  color: #92400e;
+  color: var(--rule-review-text);
 }
 
 .rule-status.failed {
   background: var(--rule-failed);
-  color: var(--accent);
+  color: var(--rule-failed-text);
 }
 
 .db-schema {
