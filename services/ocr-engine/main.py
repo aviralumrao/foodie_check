@@ -10,7 +10,10 @@ app = FastAPI(title="Foodie Check OCR Service")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://foodie-check.vercel.app"
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -69,11 +72,25 @@ async def evaluate_compliance(front: UploadFile = File(...), back: UploadFile = 
     passed = sum(1 for r in rule_results if r["status"] == "passed")
     review = sum(1 for r in rule_results if r["status"] == "needs_review")
     failed = sum(1 for r in rule_results if r["status"] == "failed")
+    not_applicable = sum(1 for r in rule_results if r["status"] == "not_applicable")
+    
+    if failed > 0:
+        overall_status = "failed"
+    elif review > 0:
+        overall_status = "needs_review"
+    else:
+        overall_status = "passed"
 
     report = {
         "fields": fields,
         "rules": rule_results,
-        "summary": {"passed": passed, "needs_review": review, "failed": failed},
+        "summary": {
+            "passed": passed, 
+            "needs_review": review, 
+            "failed": failed,
+            "not_applicable": not_applicable,
+            "overall_status": overall_status
+        },
     }
 
     return report
