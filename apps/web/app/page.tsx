@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/navbar";
 import UploadSection from "@/components/scan/UploadSection";
 import ReportSection from "@/components/scan/ReportSection";
-import { runOcrScan, EvaluateResponse } from "@/lib/api";
+import { EvaluateResponse } from "@/lib/api";
 import { pdf } from "@react-pdf/renderer";
 import { ReportPDF } from "@/components/scan/ReportPDF";
 
@@ -24,30 +24,25 @@ export default function Home() {
     }
     setLoading(true);
     try {
-      const result = await runOcrScan(frontFile, backFile);
+      const formData = new FormData();
+      formData.append("front", frontFile);
+      formData.append("back", backFile);
+
+      const response = await fetch("/api/scan", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to generate report");
+      }
+
+      const result = await response.json();
+
       setReportData(result);
+      setScanId(result.scanId);
       setScanTimestamp(new Date().toLocaleString());
-
-      const commonNameField = result.fields.common_name;
-      const productName =
-        commonNameField && !Array.isArray(commonNameField) && "value" in commonNameField
-          ? commonNameField.value || "Unknown Product"
-          : "Unknown Product";
-
-      const newScanId = `SC-${Date.now().toString().slice(-8)}`;
-      setScanId(newScanId);
-
-      const scanRecord = {
-        id: newScanId,
-        timestamp: new Date().toISOString(),
-        productName,
-        summary: result.summary,
-        rules: result.rules,
-      };
-
-      const history = JSON.parse(localStorage.getItem("scanHistory") || "[]");
-      history.unshift(scanRecord);
-      localStorage.setItem("scanHistory", JSON.stringify(history.slice(0, 50)));
     } catch (err: any) {
       console.error(err);
       alert(`Error generating report: ${err.message || err}`);

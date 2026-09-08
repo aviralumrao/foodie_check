@@ -13,17 +13,33 @@ export default function HistoryPage() {
   const [scans, setScans] = useState<ScanRecord[]>([]);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("scanHistory");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.length > 0) {
-          queueMicrotask(() => setScans(parsed));
+    async function fetchHistory() {
+      try {
+        const res = await fetch("/api/scans");
+        if (res.ok) {
+          const data = await res.json();
+          // Map the database row to match the existing ScanRecord shape
+          const formattedScans = data.map((row: any) => ({
+            id: row.id,
+            timestamp: row.created_at,
+            productName: row.product_name,
+            summary: {
+              passed: row.passed,
+              needs_review: row.needs_review,
+              failed: row.failed,
+              overall_status: row.overall_status,
+            },
+            rules: row.rules_result,
+          }));
+          setScans(formattedScans);
+        } else {
+          console.error("Failed to fetch scan history");
         }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
     }
+    fetchHistory();
   }, []);
 
   const totalScans = scans.length;
