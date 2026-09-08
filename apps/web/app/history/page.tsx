@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/navbar";
 import KpiCard from "@/components/history/KpiCard";
-import TrendChart from "@/components/history/TrendChart";
-import ViolationList from "@/components/history/ViolationList";
 import RecentScansTable, { ScanRecord } from "@/components/history/RecentScansTable";
 import { ScanLine, BadgeCheck, AlertTriangle } from "lucide-react";
 
@@ -76,12 +74,6 @@ export default function HistoryPage() {
               value={criticalScans.toString().padStart(2, "0")}
               icon={AlertTriangle}
             />
-          </div>
-
-          {/* Middle Section: Chart + Violations */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-            <TrendChart />
-            <ViolationList />
           </div>
 
           {/* Bottom: Recent Scans */}

@@ -9,6 +9,11 @@ const navItems = [
   { label: "Home", href: "/", id: "navbar-home-link" },
   { label: "History", href: "/history", id: "navbar-history-link" },
   { label: "About", href: "/about", id: "navbar-about-link" },
+  {
+    label: "Documentation",
+    href: "/project-documentation.html",
+    id: "navbar-documentation-link",
+  },
 ];
 
 export default function Navbar() {
